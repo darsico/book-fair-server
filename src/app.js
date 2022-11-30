@@ -8,9 +8,12 @@ import BuyerRoutes from './routes/buyer.routes';
 import SellerRoutes from './routes/seller.routes';
 // import BookRoutes from './routes/book.routes';
 import SellersRoutes from './routes/sellers.routes';
+import AuthRoutes from './routes/auth.routes';
+
+import { createRoles } from './libs/initialSetup';
 
 const app = express();
-
+createRoles()
 app.set('port', config.port)
 
 //middlewares
@@ -32,5 +35,6 @@ app.get('/', (req, res) => {
 app.use('/api/seller/', SellerRoutes)
 app.use('/api/buyer/', BuyerRoutes)
 app.use('/api/sellers/', SellersRoutes)
+app.use('/api/auth', AuthRoutes)
 
 export default app;

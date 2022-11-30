@@ -7,6 +7,7 @@ import config from "./config";
    {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+
    });
   console.log('Connected to MongoDB database: ', db.connection.name)
  } catch (error) {

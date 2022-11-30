@@ -2,65 +2,93 @@ import Book from "../models/Book";
 import Seller from "../models/Seller";
 
 export const getAllSellers = async (req, res) => {
- const { store } = req.query;
+ try {
+  const { store } = req.query;
 
- const condition = store ?
-  {
-   store: {
-    $regex: new RegExp(store),
-    $options: "i"
-   }
-  } : {};
+  const condition = store ?
+   {
+    store: {
+     $regex: new RegExp(store),
+     $options: "i"
+    }
+   } : {};
 
- const sellers = await Seller.find(condition).populate("books");
 
- if (!sellers) return res.status(400).json({ message: "No sellers found" })
+  const sellers = await Seller.find(condition).populate("books");
 
- res.status(200).json({
-  message: "Sellers found",
-  sellers
- });
+  // const sellersPublicData = sellers.map(seller => {
+  //  delete seller.orders;
+  //  return seller
+  // });
+  console.log(sellers)
+  if (!sellers) return res.status(400).json({ message: "No sellers found" })
+
+  res.status(200).json({
+   message: "Sellers found",
+   sellers
+  });
+ } catch (error) {
+  console.error(error);
+  res.status(500).json({
+   message: error.message || "Something went wrong"
+  });
+ }
 }
 
 //get seller by id but not orders 
 export const getSellerById = async (req, res) => {
- if (!req.params.sellerId) {
-  return res.status(400).json({
-   message: "Id is required"
+ try {
+  if (!req.params.sellerId) {
+   return res.status(400).json({
+    message: "Id is required"
+   });
+  }
+  const seller = await Seller.findById(req.params.sellerId);
+
+  if (!seller) return res.status(400).json({ message: "Seller not found" })
+
+  res.status(200).json({
+   message: "Seller found",
+   seller: {
+    sellerName: seller.name,
+    sellerEmail: seller.email,
+    sellerStore: seller.store
+   },
+
   });
+ } catch (error) {
+  console.error(error);
+  res.status(500).json({
+   message: error.message || "Something went wrong"
+  });
+
  }
- const seller = await Seller.findById(req.params.sellerId);
-
- if (!seller) return res.status(400).json({ message: "Seller not found" })
-
- res.status(200).json({
-  message: "Seller found",
-  seller: {
-   sellerName: seller.name,
-   sellerEmail: seller.email,
-   sellerStore: seller.store
-  },
-
- });
 }
 
 // get seller books 
 export const getSellerBooks = async (req, res) => {
- if (!req.params.sellerId) {
-  return res.status(400).json({
-   message: "Id is required"
+ try {
+  if (!req.params.sellerId) {
+   return res.status(400).json({
+    message: "Id is required"
+   });
+  }
+  const seller = await Seller.findById(req.params.sellerId);
+  if (!seller) return res.status(400).json({ message: "Seller not found" })
+
+  const books = await Book.find({ seller: seller._id });
+  if (!books) return res.status(400).json({ message: "Seller has no books" })
+
+  res.status(200).json({
+   message: "Seller books found",
+   books
+  });
+ } catch {
+  console.error(error);
+  res.status(500).json({
+   message: error.message || "Something went wrong"
   });
  }
- const seller = await Seller.findById(req.params.sellerId);
- if (!seller) return res.status(400).json({ message: "Seller not found" })
-
- const books = await Book.find({ seller: seller._id });
- if (!books) return res.status(400).json({ message: "Seller has no books" })
-
- res.status(200).json({
-  message: "Seller books found",
-  books
- });
 }
 //get all books and search by title optional
 export const getAllBooks = async (req, res) => {
@@ -86,6 +114,20 @@ export const getAllBooks = async (req, res) => {
  } catch (error) {
   res.status(500).json({
    message: error.message || "Something went wrong retrieving the books"
+  });
+ }
+}
+
+
+export const deleteAllSellers = async (req, res) => {
+ try {
+  await Seller.deleteMany();
+  res.status(200).json({
+   message: "All sellers deleted"
+  });
+ } catch (error) {
+  res.status(500).json({
+   message: error.message || "Something went wrong"
   });
  }
 }

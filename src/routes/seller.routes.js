@@ -1,14 +1,18 @@
 import { Router } from "express";
 import * as sellerCtrl from "../controllers/seller.controller";
+import * as authJwt from "../middlewares/authJwt";
+import { checkExistingUser, checkForm } from "../middlewares/verify";
+
 
 const router = Router()
 
-router.post('/new', sellerCtrl.createSeller)
-router.post('/login', sellerCtrl.loginSeller)
-router.get('/:sellerId', sellerCtrl.getSellerById)
-router.post('/:sellerId/books/new', sellerCtrl.newSellerBook)
+router.get('/:sellerId', [authJwt.verifySellerToken, authJwt.isSeller], sellerCtrl.getSellerById)
+router.post('/:sellerId/books/new', [authJwt.verifySellerToken, authJwt.isSeller], sellerCtrl.newSellerBook)
 router.get('/:sellerId/books', sellerCtrl.getSellerBooks)
-router.put('/:sellerId/books/:bookId', sellerCtrl.updateSellerBook)
-router.delete('/:sellerId/books/:bookId', sellerCtrl.deleteSellerBook)
+router.put('/:sellerId/books/:bookId', [authJwt.verifySellerToken, authJwt.isSeller], sellerCtrl.updateSellerBook)
+router.delete('/:sellerId/books/:bookId', [authJwt.verifySellerToken, authJwt.isSeller], sellerCtrl.deleteSellerBook)
 
+
+router.delete('/deletebooks', sellerCtrl.deleteAllBooks)
+router.delete('/deletesellers', sellerCtrl.deleteAllSellers)
 export default router;
