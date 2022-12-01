@@ -119,15 +119,4 @@ export const getAllBooks = async (req, res) => {
 }
 
 
-export const deleteAllSellers = async (req, res) => {
- try {
-  await Seller.deleteMany();
-  res.status(200).json({
-   message: "All sellers deleted"
-  });
- } catch (error) {
-  res.status(500).json({
-   message: error.message || "Something went wrong"
-  });
- }
-}
+

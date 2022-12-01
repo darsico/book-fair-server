@@ -1,7 +1,6 @@
 import { Router } from "express";
 import * as sellerCtrl from "../controllers/seller.controller";
 import * as authJwt from "../middlewares/authJwt";
-import { checkExistingUser, checkForm } from "../middlewares/verify";
 
 
 const router = Router()
