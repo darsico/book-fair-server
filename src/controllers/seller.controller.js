@@ -58,6 +58,14 @@ export const newSellerBook = async (req, res) => {
    });
   }
 
+  const doesBookExist = await Book.findOne({ title, seller: seller._id });
+
+  if (doesBookExist) {
+   return res.status(400).json({
+    message: "Book already exists in your store, please update it"
+   });
+  }
+
   const newBook = new Book({
    title, description, price, seller: seller._id, image, stock
   });

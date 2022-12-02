@@ -64,7 +64,7 @@ export const createNewUser = async (req, res) => {
   if (!password) res.status(400).json({ message: 'Please fill the password field' });
   if (!role) res.status(400).json({ message: 'Please fill the role field' });
   if (!name) res.status(400).json({ message: 'Please fill the name field' });
-  if (!store) res.status(400).json({ message: 'Please fill the store field' });
+
 
   if (typeof email !== 'string' || typeof password !== 'string' || typeof role !== 'string', typeof store !== 'string', typeof name !== 'string') res.status(400).json({ message: 'Invalid data' })
 
@@ -73,6 +73,9 @@ export const createNewUser = async (req, res) => {
   if (incomingRole !== 'buyer' && incomingRole !== 'seller') res.status(400).json({ message: 'The role sent is incorrect' });
 
   if (role === 'seller') {
+
+   if (!store) res.status(400).json({ message: 'Please fill the store field' });
+
    const seller = await Seller.findOne({
     email,
    });

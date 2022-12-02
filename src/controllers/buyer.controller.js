@@ -68,7 +68,7 @@ export const createOrder = async (req, res) => {
       buyer: buyer._id,
       seller: seller._id,
       total,
-    });
+    }).populate(["books", "buyer", "seller"]);
 
     seller.orders = [...seller.orders, newOrder._id];
     buyer.orders = [...buyer.orders, newOrder._id];
@@ -84,7 +84,7 @@ export const createOrder = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Something went wrong"
+      message: error.message || "Something went wrong"
     });
   }
 };
