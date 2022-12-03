@@ -73,7 +73,11 @@ export const getSellerBooks = async (req, res) => {
   const seller = await Seller.findById(req.params.sellerId);
   if (!seller) return res.status(400).json({ message: "Seller not found" })
 
-  const books = await Book.find({ seller: seller._id }).populate("seller");
+  const books = await Book.find({ seller: seller._id }).populate("seller", {
+   name: 1,
+   store: 1,
+   email: 1
+  })
   if (!books) return res.status(400).json({ message: "Seller has no books" })
 
   res.status(200).json({

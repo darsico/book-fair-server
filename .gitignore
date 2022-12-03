@@ -2,3 +2,4 @@
 /requests/
 /dist/
 .env
+.vscode/

@@ -21,7 +21,7 @@ export const getSellerBooks = async (req, res) => {
   });
  }
  const seller = await Seller.findById(req.params.sellerId);
- const books = await Book.find({ seller: seller._id });
+ const books = await Book.find({ seller: seller._id }).select("-seller");
  res.status(200).json({
   message: "Seller books found",
   books
@@ -29,6 +29,7 @@ export const getSellerBooks = async (req, res) => {
 }
 
 export const newSellerBook = async (req, res) => {
+ console.log(req.body);
  try {
   if (!req.params.sellerId) {
    return res.status(400).json({
@@ -36,7 +37,13 @@ export const newSellerBook = async (req, res) => {
    });
   }
   const seller = await Seller.findById(req.params.sellerId);
-  const { title = false, description = false, price = false, image, stock = false } = req.body;
+  const { title = false, description = false, price = false, image, stock = false, author } = req.body;
+  console.log(req.body);
+  if (!author) {
+   return res.status(400).json({
+    message: "Author is required"
+   });
+  }
   if (!stock) {
    return res.status(400).json({
     message: "Stock is required"
@@ -67,7 +74,7 @@ export const newSellerBook = async (req, res) => {
   }
 
   const newBook = new Book({
-   title, description, price, seller: seller._id, image, stock
+   title, description, price, seller: seller._id, image, stock, author
   });
   const bookSaved = await newBook.save();
 
