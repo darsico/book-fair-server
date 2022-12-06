@@ -1,9 +1,16 @@
 import { Schema, model } from "mongoose";
 
 const orderSchema = new Schema({
+
  books: [{
-  type: Schema.Types.ObjectId,
-  ref: "Book"
+  quantity: {
+   type: Number,
+   required: true
+  },
+  book: {
+   type: Schema.Types.ObjectId,
+   ref: "Book",
+  }
  }],
  seller: {
   type: Schema.Types.ObjectId,
@@ -16,7 +23,7 @@ const orderSchema = new Schema({
  total: {
   type: Number,
   required: true,
- }
+ },
 }, {
  timestamps: true,
  versionKey: false

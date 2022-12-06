@@ -7,7 +7,28 @@ export const getSellerById = async (req, res) => {
    message: "Id is required"
   });
  }
- const seller = await Seller.findById(req.params.sellerId).populate("books");
+ const seller = await Seller.findById(req.params.sellerId).populate("books").populate("orders", {
+  books: {
+   quantity: 1
+  },
+ }).populate({
+  path: "orders",
+  populate: {
+   path: "books.book",
+   model: "Book",
+  }
+ }).populate({
+  path: "orders",
+  populate: {
+   path: "buyer",
+   model: "Buyer",
+   select: {
+    name: 1,
+    email: 1
+   }
+  }
+ })
+
  res.status(200).json({
   message: "Seller found",
   seller
@@ -22,9 +43,10 @@ export const getSellerBooks = async (req, res) => {
  }
  const seller = await Seller.findById(req.params.sellerId);
  const books = await Book.find({ seller: seller._id }).select("-seller");
+ const reversedBooks = books.reverse();
  res.status(200).json({
   message: "Seller books found",
-  books
+  books: reversedBooks
  });
 }
 

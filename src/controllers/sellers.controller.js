@@ -70,7 +70,8 @@ export const getSellerBooks = async (req, res) => {
     message: "Id is required"
    });
   }
-  const seller = await Seller.findById(req.params.sellerId);
+  const seller = await Seller.findById(req.params.sellerId).select(["-orders", "-password", "-roles", "-updatedAt", "-createdAt", "-__v"]);
+
   if (!seller) return res.status(400).json({ message: "Seller not found" })
 
   const books = await Book.find({ seller: seller._id }).populate("seller", {
@@ -82,9 +83,10 @@ export const getSellerBooks = async (req, res) => {
 
   res.status(200).json({
    message: "Seller books found",
+   seller,
    books
   });
- } catch {
+ } catch (error) {
   console.error(error);
   res.status(500).json({
    message: error.message || "Something went wrong"
