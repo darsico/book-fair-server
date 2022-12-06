@@ -139,56 +139,28 @@ export const getBuyerById = async (req, res) => {
       });
     }
 
-    // const seller = await Seller.findById(req.params.sellerId).populate("books").populate("orders", {
-    //   books: {
-    //    quantity: 1
-    //   },
-    //  }).populate({
-    //   path: "orders",
-    //   populate: {
-    //    path: "books.book",
-    //    model: "Book",
-    //   }
-    //  }).populate({
-    //   path: "orders",
-    //   populate: {
-    //    path: "buyer",
-    //    model: "Buyer",
-    //    select: {
-    //     name: 1,
-    //     email: 1
-    //    }
-    //   }
-    //  })
-
     const buyer = await Buyer.findById(buyerId)
-      .populate('orders', {
-        books: {
-          quantity: 1,
-        },
-      })
-      .populate({
-        path: 'orders',
-        populate: {
-          path: 'books.book',
-          model: 'Book',
-        },
-      })
-      .populate({
-        path: 'orders',
-        populate: {
-          path: 'seller',
-          model: 'Seller',
-          select: {
-            name: 1,
-            email: 1,
-          },
-        },
-      });
+
+    const buyerOrders = await Order.find({
+      buyer: buyerId,
+    }).populate({
+      path: 'books',
+      populate: {
+        path: 'book',
+        model: 'Book',
+      },
+    }).populate('seller', {
+      // store: 1,
+      name: 1,
+      email: 1,
+    });
+
     res.status(200).json({
       message: 'Buyer found',
       buyer,
+      orders: buyerOrders?.reverse(),
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({
