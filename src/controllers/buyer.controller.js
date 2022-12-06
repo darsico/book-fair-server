@@ -108,26 +108,6 @@ export const createOrder = async (req, res) => {
   }
 };
 
-//  const { email = false } = req.body;
-//  if (!email) {
-//   return res.status(400).json({
-//    message: "Email is required"
-//   });
-//  }
-//  const buyer = await Buyer.findOne({
-//   email
-//  });
-//  if (!buyer) {
-//   return res.status(400).json({
-//    message: "Buyer not found"
-//   });
-//  }
-//  res.status(200).json({
-//   message: "Buyer found",
-//   buyer
-//  });
-// };
-
 //get buyer by info and orders
 export const getBuyerById = async (req, res) => {
   try {
@@ -150,7 +130,7 @@ export const getBuyerById = async (req, res) => {
         model: 'Book',
       },
     }).populate('seller', {
-      // store: 1,
+      store: 1,
       name: 1,
       email: 1,
     });

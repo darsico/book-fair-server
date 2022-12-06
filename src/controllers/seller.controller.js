@@ -1,6 +1,6 @@
 import Book from "../models/Book";
 import Seller from "../models/Seller";
-
+import Order from "../models/Order";
 export const getSellerById = async (req, res) => {
  if (!req.params.sellerId) {
   return res.status(400).json({
@@ -29,9 +29,23 @@ export const getSellerById = async (req, res) => {
   }
  })
 
+ const sellerOrders = await Order.find({
+  seller: req.params.sellerId,
+ }).populate({
+  path: "books",
+  populate: {
+   path: "book",
+   model: "Book",
+  }
+ }).populate("buyer", {
+  name: 1,
+  email: 1,
+ });
+
  res.status(200).json({
   message: "Seller found",
-  seller
+  seller,
+  sellerOrders: sellerOrders?.reverse(),
  });
 }
 
@@ -46,6 +60,7 @@ export const getSellerBooks = async (req, res) => {
  const reversedBooks = books.reverse();
  res.status(200).json({
   message: "Seller books found",
+  seller,
   books: reversedBooks
  });
 }
